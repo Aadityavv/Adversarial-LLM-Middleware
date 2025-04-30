@@ -1,62 +1,52 @@
-import React, { useEffect, useRef, useState } from 'react';
-import ChatMessage from './components/ChatMessage';
-import InputBar from './components/InputBar';
-import { detectAdversarial, correctPrompt, queryLLM } from './services/api';
+import React, { useState } from 'react';
 import './App.css';
+import Header from './components/Header';
+import ChatWindow from './components/ChatWindow';
+import InputBar from './components/InputBar';
 
 function App() {
   const [messages, setMessages] = useState([]);
-  const [inputText, setInputText] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const bottomRef = useRef(null);
+  const [input, setInput] = useState('');
+  const [loading, setLoading] = useState(false);
+  const hasStarted = messages.length > 0;
 
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+  const sendMessage = async () => {
+    if (!input.trim()) return;
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const prompt = inputText.trim();
-    if (!prompt) return;
-
-    setMessages((prev) => [...prev, { sender: 'user', text: prompt }]);
-    setInputText('');
-    setIsLoading(true);
+    const userMessage = { sender: 'user', text: input };
+    setMessages(prev => [...prev, userMessage]);
+    setInput('');
+    setLoading(true);
 
     try {
-      const detection = await detectAdversarial(prompt);
-      if (detection.isAdversarial) {
-        setMessages((prev) => [...prev, { sender: 'bot', text: '🔍 Adversarial detected. Correcting...' }]);
-        const correction = await correctPrompt(prompt);
-        setMessages((prev) => [...prev, { sender: 'bot', text: `✅ Corrected:\n${correction.correctedPrompt}` }]);
-        const response = await queryLLM(correction.correctedPrompt);
-        setMessages((prev) => [...prev, { sender: 'bot', text: response.response }]);
-      } else {
-        const response = await queryLLM(prompt);
-        setMessages((prev) => [...prev, { sender: 'bot', text: response.response }]);
-      }
+      const res = await fetch('http://localhost:5000/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: input })
+      });
+      const data = await res.json();
+      const botMessage = { sender: 'bot', text: data.response };
+      setMessages(prev => [...prev, botMessage]);
     } catch {
-      setMessages((prev) => [...prev, { sender: 'bot', text: '❌ Something went wrong.' }]);
-    } finally {
-      setIsLoading(false);
+      setMessages(prev => [...prev, { sender: 'bot', text: 'Error: Could not fetch response.' }]);
     }
+
+    setLoading(false);
   };
 
   return (
     <div className="app">
-      <header className="header">Adversarial Input Detection and Correction</header>
-      <div className="chat-container">
-        {messages.map((msg, idx) => (
-          <ChatMessage key={idx} sender={msg.sender} text={msg.text} />
-        ))}
-        <div ref={bottomRef} />
-      </div>
-      <InputBar
-        value={inputText}
-        onChange={(e) => setInputText(e.target.value)}
-        onSubmit={handleSubmit}
-        isLoading={isLoading}
-      />
+      <Header />
+      {!hasStarted ? (
+        <div className="centered-input-wrapper">
+          <InputBar input={input} setInput={setInput} onSend={sendMessage} />
+        </div>
+      ) : (
+        <>
+          <ChatWindow messages={messages} loading={loading} />
+          <InputBar input={input} setInput={setInput} onSend={sendMessage} />
+        </>
+      )}
     </div>
   );
 }

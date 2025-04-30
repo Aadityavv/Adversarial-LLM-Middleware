@@ -1,21 +1,24 @@
 import React from 'react';
-import './InputBar.css';
 
-function InputBar({ value, onChange, onSubmit, isLoading }) {
+const InputBar = ({ input, setInput, onSend }) => {
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') onSend();
+  };
+
   return (
-    <form className="input-bar" onSubmit={onSubmit}>
-      <textarea
-        className="input-field"
-        placeholder="Type your message..."
-        value={value}
-        onChange={onChange}
-        disabled={isLoading}
-      />
-      <button className="send-button" type="submit" disabled={isLoading}>
-        ➤
-      </button>
-    </form>
+    <div className="input-bar">
+      <div className="input-bar-container">
+        <input
+          type="text"
+          value={input}
+          placeholder="Type your message..."
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={handleKeyDown}
+        />
+        <button onClick={onSend}>Send ➤</button>
+      </div>
+    </div>
   );
-}
+};
 
 export default InputBar;
