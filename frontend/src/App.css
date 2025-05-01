@@ -1,0 +1,25 @@
+.app {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background: #f0f2f5;
+  }
+  
+  .header {
+    background: white;
+    padding: 1rem;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .chat-container {
+    flex: 1;
+    padding: 1rem;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
