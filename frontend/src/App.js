@@ -19,8 +19,7 @@ function App() {
   const sendMessage = async () => {
     if (!input.trim()) return;
 
-    const userMessage = { sender: 'user', text: input };
-    setMessages((prev) => [...prev, userMessage]);
+    const rawInput = input;
     setInput('');
     setLoading(true);
 
@@ -29,26 +28,31 @@ function App() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          prompt: input,
+          prompt: rawInput,
           middleware: detectActive
         })
       });
 
       const data = await res.json();
 
+      const userMessage = {
+        sender: 'user',
+        text: data.corrected_prompt || rawInput,
+        adversarial_detected: data.adversarial_detected,
+        original_prompt: data.original_prompt
+      };
+
       const botMessage = {
         sender: 'bot',
-        text: data.response,
-        adversarial_detected: data.adversarial_detected,
-        original_prompt: data.original_prompt,
-        corrected_prompt: data.corrected_prompt
+        text: data.response
       };
-      
 
-      setMessages((prev) => [...prev, botMessage]);
+      setMessages((prev) => [...prev, userMessage, botMessage]);
+
     } catch {
       setMessages((prev) => [
         ...prev,
+        { sender: 'user', text: rawInput },
         { sender: 'bot', text: '⚠️ Request failed.' }
       ]);
     }
