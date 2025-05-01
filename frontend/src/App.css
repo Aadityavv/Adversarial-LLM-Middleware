@@ -1,25 +1,121 @@
-.app {
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background-color: #f4f6f8;
+    color: #222;
+  }
+  
+  .app {
     display: flex;
     flex-direction: column;
     height: 100vh;
-    background: #f0f2f5;
   }
   
+  /* 🧠 Header */
   .header {
-    background: white;
-    padding: 1rem;
     text-align: center;
-    font-weight: bold;
-    font-size: 1.2rem;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    font-size: 1.6rem;
+    font-weight: 600;
+    padding: 16px 0;
+    background-color: #ffffff;
+    border-bottom: 1px solid #e0e0e0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    position: sticky;
+    top: 0;
+    z-index: 10;
   }
   
-  .chat-container {
+  .header span {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #333;
+  }
+  
+  /* 💬 Chat Window */
+  .chat-window {
     flex: 1;
-    padding: 1rem;
+    padding: 32px 16px;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 16px;
+    max-width: 800px;
+    width: 100%;
+    margin: 0 auto;
+  }
+  
+  /* 🗨️ Message bubbles */
+  .message {
+    max-width: 70%;
+    padding: 12px 18px;
+    border-radius: 16px;
+    font-size: 1rem;
+    line-height: 1.5;
+    word-break: break-word;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    transition: all 0.3s ease;
+  }
+  
+  .user {
+    align-self: flex-end;
+    background-color: #d2eafd;
+    border: 1px solid #b0d7f7;
+  }
+  
+  .bot {
+    align-self: flex-start;
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+  }
+  
+  /* 📝 Input Bar */
+  .input-bar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 16px;
+    border-top: 1px solid #ddd;
+    background-color: #fff;
+    position: sticky;
+    bottom: 0;
+    z-index: 9;
+  }
+  
+  .input-bar-container {
+    max-width: 800px;
+    width: 100%;
+    display: flex;
+    gap: 12px;
+    background: #f9f9f9;
+    padding: 10px 14px;
+    border-radius: 30px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+  
+  .input-bar input {
+    flex: 1;
+    border: none;
+    padding: 12px 16px;
+    font-size: 1rem;
+    border-radius: 20px;
+    background-color: #f1f1f1;
+    outline: none;
+  }
+  
+  .input-bar button {
+    padding: 12px 20px;
+    border-radius: 25px;
+    background-color: #007bff;
+    color: white;
+    font-weight: 600;
+    font-size: 1rem;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .input-bar button:hover {
+    background-color: #0056b3;
   }
   
